@@ -1,0 +1,28 @@
+メモ用
+
+
+insert.phpを参考にする
+
+フォームに入れたパスワードが平文でそのままテーブルに追加されてしまう
+
+$stmt = $pdo->prepare(
+"INSERT INTO gs_bm_table(bookname,bookURL,img,naiyou,indate )VALUES(:bookname,:bookURL,:img,:naiyou,sysdate()
+)");
+
+$stmt->bindValue(':bookname', $bookname, PDO::PARAM_STR);  //Integer（数値の場合 PDO::PARAM_INT)
+$stmt->bindValue(':bookURL', $bookURL, PDO::PARAM_STR);  //Integer（数値の場合 PDO::PARAM_INT)
+$stmt->bindValue(':img', $img, PDO::PARAM_STR);  //Integer（数値の場合 PDO::PARAM_INT)
+$stmt->bindValue(':naiyou', $naiyou, PDO::PARAM_STR);  //Integer（数値の場合 PDO::PARAM_INT)
+$status = $stmt->execute();
+
+
+hash.phpのコードを使う
+
+$pw=password_hash("test1",PASSWORD_DEFAULT);
+echo $pw;
+
+ハッシュ化された文字列　= password_hash(ハッシュ化したい文字列, ...)
+
+$lpw = $_POST["lpw"];
+
+$hash = password_hash($lpw, ...);

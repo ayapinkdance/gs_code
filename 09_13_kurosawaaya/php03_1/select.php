@@ -1,14 +1,41 @@
 <?php
+session_start();
 include "funcs.php";
 $pdo = db_con();
 
 //２．データ登録SQL作成
 $stmt = $pdo->prepare("SELECT * FROM gs_bm_table");
-$stmt = $pdo->prepare("SELECT * FROM gs_user_table");
+// $stmt = $pdo->prepare("SELECT * FROM gs_user_table");
 $status = $stmt->execute();
 
 //３．データ表示
+$head = "";
 $view = "";
+
+if($_SESSION["kanri_flg"]=="1"){
+    $head = 
+        '<tr>
+        <th></th>
+        <th>日時</th>
+        <th>書籍名</th>
+        <th>書籍URL<a href=""></a></th>
+        <th>書籍画像</th>
+        <th>コメント</th>
+        <th></th>
+        </tr>';
+        // '<p>管理者ですよ</p>';
+}else{
+    $head = 
+        '<tr>
+        <th>日時</th>
+        <th>書籍名</th>
+        <th>書籍URL<a href=""></a></th>
+        <th>書籍画像</th>
+        <th>コメント</th>
+        </tr>';
+    // '<p>一般ユーザですよ</p>';
+}
+
 
 if ($status == false) {
     sqlError($stmt);
@@ -36,21 +63,27 @@ if ($status == false) {
         //             <td>'.$result["naiyou"].'</td>
         //             <td><a href="delete.php?id='.$result["id"].'">削除する</a></td>
         //         </tr>';
-
-        $view.= if($_SESSION["kanri_flg"]=="1"){
-            $view .= '<tr>
-                    
-                      </tr>'
-            
-            <a href="delete.php?id=' . $result["id"] . '">';
-            // $view .= "[☓]";
-            // $view .= '</a>';
+        $view.= '<p>';
+        if($_SESSION["kanri_flg"]=="1"){
+            $view.='<tr>
+                    <td><a href="detail.php?id='.$result["id"].'">修正する</a></td>
+                    <td>'.$result["indate"].'</td>
+                    <td>'.$result["bookname"].'</td>
+                    <td><a href="'.$result["bookURL"].'">'.$result["bookURL"].'</a></td>
+                    <td><img src="'.$result["img"].'"></td>
+                    <td>'.$result["naiyou"].'</td>
+                    <td><a href="delete.php?id='.$result["id"].'">削除する</a></td>
+                    </tr>';
+        }   
+        else{
+            $view.='<tr>
+                    <td>'.$result["bookname"].'</td>
+                    <td><a href="'.$result["bookURL"].'">'.$result["bookURL"].'</a></td>
+                    <td><img src="'.$result["img"].'"></td>
+                    <td>'.$result["naiyou"].'</td>
+                    </tr>';
         }
-        if{
-
-        }else{
-
-        }
+        // $view.= '</p>';
         // $view .= '</a>';
         // $view.='　';
         // $view .= '<a href="delete.php?id='.$result["id"].'">';
@@ -80,7 +113,8 @@ if ($status == false) {
   <nav class="navbar navbar-default">
     <div class="container-fluid">
       <div class="navbar-header">
-      <a class="navbar-brand" href="index.php">データ登録</a>
+      <a class="navbar-brand" href="./bookmark/index.php">データ登録</a>
+      <a class="navbar-brand" href="./kanri/logout.php">ログアウト</a>
       </div>
     </div>
   </nav>
@@ -91,7 +125,7 @@ if ($status == false) {
 <div>
     <!-- <div class="container jumbotron"> -->
     <table border="1">
-    <tr>
+    <!-- <tr>
     <th></th>
     <th>日時</th>
     <th>書籍名</th>
@@ -99,7 +133,9 @@ if ($status == false) {
     <th>書籍画像</th>
     <th>コメント</th>
     <th></th>
-    </tr>
+    </tr> -->
+    <?php echo $head?>
+
     <?php echo $view?></div>
    </table>
    <!-- </div> -->
